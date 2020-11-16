@@ -1,0 +1,51 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    phpmyadmin.yaml                                    :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/11/16 18:41:38 by atomatoe          #+#    #+#              #
+#    Updated: 2020/11/16 23:04:44 by atomatoe         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-svc
+  annotations:
+    metallb.universe.tf/allow-shared-ip: minikube
+spec:
+  selector:
+    app: phpmyadmin
+  type: LoadBalancer
+  loadBalancerIP: 192.168.99.101
+  ports:
+    - protocol: TCP
+      name: http
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin_image
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 5000

@@ -1,0 +1,24 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    configmap.yaml                                     :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/11/16 18:41:20 by atomatoe          #+#    #+#              #
+#    Updated: 2020/11/16 18:41:21 by atomatoe         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.99.100-192.168.99.200

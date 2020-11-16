@@ -1,0 +1,56 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    ftps.yaml                                          :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/11/16 18:40:07 by atomatoe          #+#    #+#              #
+#    Updated: 2020/11/17 01:00:39 by atomatoe         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ftps-svc
+  annotations:
+    metallb.universe.tf/allow-shared-ip: minikube
+spec:
+  selector:
+    app: ftps
+  type: LoadBalancer
+  loadBalancerIP: 192.168.99.101
+  ports:
+    - protocol: TCP
+      name: http
+      port: 21
+      targetPort: 21
+    - protocol: TCP
+      name: ftps
+      port: 10100
+      targetPort: 10100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftps-deployment
+  labels:
+    app: ftps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftps
+  template:
+    metadata:
+      labels:
+        app: ftps
+    spec:
+      containers:
+      - name: ftps
+        image: ftps_image
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 21
+          - containerPort: 10100

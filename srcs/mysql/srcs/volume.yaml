@@ -1,0 +1,26 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    volume.yaml                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/11/16 18:41:02 by atomatoe          #+#    #+#              #
+#    Updated: 2020/11/16 18:41:03 by atomatoe         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-volume
+  labels:
+    type: local
+spec:
+  storageClassName: mysql-volume
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/mysql"

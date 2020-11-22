@@ -6,25 +6,28 @@
 #    By: atomatoe <atomatoe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/16 18:44:07 by atomatoe          #+#    #+#              #
-#    Updated: 2020/11/16 19:52:42 by atomatoe         ###   ########.fr        #
+#    Updated: 2020/11/17 15:28:17 by atomatoe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM alpine:latest
 
-# UPDATE
-RUN apk update && apk upgrade
-RUN apk add --no-cache  openrc mysql mysql-client php7 php7-fpm php7-json php7-mysqli
-RUN rc-update add php-fpm7 default
+RUN apk update
+RUN apk add openrc nginx supervisor mysql mysql-client php7 php7-fpm php7-json php7-mysqli
+RUN	rc-update add php-fpm7 default
 
-RUN wget https://wordpress.org/latest.tar.gz
-RUN tar -xf latest.tar.gz
+RUN	mkdir -p /run/nginx
+RUN	mkdir -p /var/run/php
 
-RUN mkdir -p /var/www/wordpress 
-RUN mv wordpress /var/www/wordpress 
-RUN rm -rf latest.tar.gz
+COPY srcs/nginx.conf		/etc/nginx/conf.d/wordpress.conf
+COPY srcs/supervisord.conf	/etc/supervisord.conf
 
-RUN mkdir -p /var/run/php
+RUN	sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php7/php-fpm.conf
+RUN	sed -it 's/;   extension=mysql.so/extension=mysql.so/g' /etc/php7/php.ini
 
+RUN	wget https://wordpress.org/latest.tar.gz
+RUN tar -xf latest.tar.gz && rm -rf latest.tar.gz
+RUN mv wordpress /var/www/wordpress
 EXPOSE 5050
-CMD php -S 0.0.0.0:5050 -t /var/www/wordpress/wordpress
+
+CMD	["usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
